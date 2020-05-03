@@ -1,0 +1,4 @@
+pandas
+Pillow
+praw
+print-schema

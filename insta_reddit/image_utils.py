@@ -58,7 +58,8 @@ class ImageText(object):
         self.draw.text((x, y), text, font=font, fill=color)
         return text_size
 
-    def get_text_size(self, font_filename, font_size, text):
+    @staticmethod
+    def get_text_size(font_filename, font_size, text):
         font = ImageFont.truetype(font_filename, font_size)
         return font.getsize(text)
 

@@ -1,33 +1,51 @@
+import os
 from insta_reddit.image_utils import ImageText
+# Download and install fonts from: https://www.cufonfonts.com/font/helvetica-neue-9
 
-color = (50, 50, 50)
-text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tincidunt ornare nulla vitae.'
-font = 'Arial.ttf'
+def get_title_and_self_text():
+    title = " Get in the habit of playing Rock Paper Scissors with people, but make sure you " \
+            "consistently lose with the same throw. Eventually they will learn to expect the same " \
+            "throw and you can win any game you actually care about."
+    print(len(title))
+    self_text = "My girlfriend and I play random rock paper scissors games for little prizes. " \
+                "Whoever loses has to do X, take out the trash, go to the store for cigs, whatever. " \
+                "I noticed after a bit that I habitually throw rock %90 of the time unless " \
+                "I'm actively trying not to. She figured it out and nearly always wins. " \
+                "So now when I want to win I just throw scissors, but I keep losing most of the time " \
+                "so I can win when it matters(to me)."
+    print(len(self_text))
+    return title, self_text
 
-# TODO: Pass image as background
-img = ImageText((800, 600), background=(255, 255, 255, 200)) # 200 = alpha
 
-# write_text_box will split the text in many lines, based on box_width
-# `place` can be 'left' (default), 'right', 'center' or 'justify'
-# write_text_box will return (box_width, box_calculed_height) so you can
-# know the size of the wrote text
-img.write_text_box((300, 50), text, box_width=200, font_filename=font,
-                   font_size=15, color=color)
-img.write_text_box((300, 125), text, box_width=200, font_filename=font,
-                   font_size=15, color=color, place='right')
+def get_bg_img():
+    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    img_file_path = cur_folder_path + "/content/images/resources/square-frame-small.jpg"
+    img = ImageText(img_file_path)
+    img = ImageText((500, 500), background=(255, 255, 255))
+    return img
 
-# Going to prefer this one:
-# TODO: Figure out how to vertically align centrally as well
-img.write_text_box((300, 200), text, box_width=200, font_filename=font,
-                   font_size=15, color=color, place='center')
-img.write_text_box((300, 275), text, box_width=200, font_filename=font,
-                   font_size=15, color=color, place='justify')
 
-# You don't need to specify text size: can specify max_width or max_height
-# and tell write_text to fill the text in this space, so it'll compute font
-# size automatically
-# write_text will return (width, height) of the wrote text
-img.write_text((100, 350), 'test fill', font_filename=font,
-               font_size='fill', max_height=150, color=color)
+def get_format():
+    return {'subreddit_font': 'Helvetica95Black.ttf',
+            'title_font': 'Helvetica65Medium_22443.ttf',
+            'self_text_font': 'Helvetica55Roman_22439.ttf',
+            'subreddit_color': (159,4,4),
+            'title_color': (33,32,32),
+            'self_text_color':(0,0,0)}
 
-img.save('sample-imagetext.png')
+
+def write_on_img():
+    title, self_text = get_title_and_self_text()
+    img_1 = get_bg_img()
+    img_2 = get_bg_img()
+    # TODO: Figure out how to vertically align centrally as well
+    img_1.write_text_box((50, 20), text="ULPT:", box_width=400, font_filename=get_format()['subreddit_font'],
+                       font_size=60, color=get_format()['subreddit_color'], place='center')
+    img_1.write_text_box((50, 140), title, box_width=400, font_filename=get_format()['title_font'],
+                       font_size=15, color=get_format()['title_color'], place='justify')
+    img_2.write_text_box((50, 50), self_text, box_width=400, font_filename=get_format()['self_text_font'],
+                       font_size=12, color=get_format()['self_text_color'], place='justify')
+    img_1.save('sample-imagetext_1.png')
+    img_2.save('sample-imagetext_2.png')
+
+write_on_img()

@@ -1,3 +1,11 @@
+"""
+# IMP - Have a config.py file in the same directory containing the following text:
+client_id='your_client_id'
+client_secret='your_client_secrety'
+user_agent='your_user_agent'
+username='your_user_name'
+"""
+
 import argparse
 import os
 import sys

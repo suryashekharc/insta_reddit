@@ -4,6 +4,8 @@ Read CSV of posts and generate images for them
 import csv
 import json
 import os
+from pathlib import Path
+
 from insta_reddit.image_utils import ImageText
 
 
@@ -53,18 +55,30 @@ def get_format():
 
 
 def get_img_output_file_paths(record):
-    # File paths to save the generated images to 
+    # File paths to save the generated images to
     cur_folder_path = os.path.dirname(os.path.realpath(__file__))
     title_path = "".join(
         [cur_folder_path, "/content/images/generated/title_", record['id'], ".png"])
     self_text_path = "".join(
         [cur_folder_path, "/content/images/generated/self_text_", record['id'], ".png"])
+    # creating directory structure if needed
+    Path("/".join(title_path.split('/')[:-1])).mkdir(parents=True, exist_ok=True)
     return title_path, self_text_path
+
+
+def image_generated(record):
+    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    title_path = "".join(
+        [cur_folder_path, "/content/images/generated/title_", record['id'], ".png"])
+    if Path(title_path).is_file():
+        return True
 
 
 def write_on_img(record=None):
     # Generates image(s) for a record with the specified text
     record = json.loads(json.dumps(record))
+    if image_generated(record):
+        return
     title, self_text = get_title_and_self_text(record)
     title_op, self_text_op = get_img_output_file_paths(record)
 
@@ -74,12 +88,6 @@ def write_on_img(record=None):
     # img_self_text_<<id>>.png
     if title:
         title_img = get_bg_img()
-        # title_img.write_text_box((50, 80), text="ULPT:", box_width=400,
-        #                      font_filename=get_format()['subreddit_font'],
-        #                      font_size=60, color=get_format()['subreddit_color'], place='center')
-        # title_img.write_text_box((50, 200), text=title, box_width=400,
-        #                      font_filename=get_format()['title_font'],
-        #                      font_size=20, color=get_format()['title_color'], place='justify')
         title_img.write_vertically_centred_text_box(left_padding=50, upper=0, lower=250,
                                                     text="ULPT:",
                                                     box_width=400,
@@ -94,6 +102,7 @@ def write_on_img(record=None):
                                                     font_size=20, color=get_format()['title_color'],
                                                     place='justify')
         title_img.save(title_op)
+        print("Image generated.")
 
     if self_text:
         self_text_img = get_bg_img()
@@ -107,14 +116,13 @@ def write_on_img(record=None):
         self_text_img.save(self_text_op)
 
 
-def get_records(csv_path="/content/posts/downloaded_posts.csv"):
+def main(csv_path="/content/posts/downloaded_posts.csv"):
     cur_folder_path = os.path.dirname(os.path.realpath(__file__))
     cur_file_path = cur_folder_path + csv_path
     input_file = csv.DictReader(open(cur_file_path))
     for row in input_file:
-        # Check if not done
         write_on_img(row)
 
 
-get_records()
-# write_on_img()
+if __name__ == "__main__":
+    main()

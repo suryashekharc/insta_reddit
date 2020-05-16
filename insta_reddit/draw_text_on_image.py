@@ -1,7 +1,8 @@
 """
 Read CSV of posts and generate images for them
 """
-
+import csv
+import json
 import os
 from insta_reddit.image_utils import ImageText
 
@@ -24,7 +25,7 @@ def get_title_and_self_text(
                     "so I can win when it matters(to me)."
         print(len(self_text))
     else:
-        title, self_text = record['title'], record['self_text']
+        title, self_text = record['title'], record['selftext']
 
     if self_text is None or self_text == "" or len(self_text) < 5:
         if title is None or len(title) >= 400 or len(self_text) >= 830:
@@ -51,13 +52,21 @@ def get_format():
             }
 
 
+def get_img_output_file_paths(record):
+    # File paths to save the generated images to 
+    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    title_path = "".join(
+        [cur_folder_path, "/content/images/generated/title_", record['id'], ".png"])
+    self_text_path = "".join(
+        [cur_folder_path, "/content/images/generated/self_text_", record['id'], ".png"])
+    return title_path, self_text_path
+
+
 def write_on_img(record=None):
-    """
-    Generates image(s) for a record with the specified text
-    :param record:
-    :return:
-    """
+    # Generates image(s) for a record with the specified text
+    record = json.loads(json.dumps(record))
     title, self_text = get_title_and_self_text(record)
+    title_op, self_text_op = get_img_output_file_paths(record)
 
     # Write title_img by default for everything, unless either title or self text cross the threshold.
     # Save it as img_title_<<id>>.png
@@ -84,7 +93,7 @@ def write_on_img(record=None):
                                                     font_filename=get_format()['title_font'],
                                                     font_size=20, color=get_format()['title_color'],
                                                     place='justify')
-        title_img.save('sample-imagetext_5.png')
+        title_img.save(title_op)
 
     if self_text:
         self_text_img = get_bg_img()
@@ -95,12 +104,17 @@ def write_on_img(record=None):
                                                         font_size=20,
                                                         color=get_format()['self_text_color'],
                                                         place='justify')
-        self_text_img.save('sample-imagetext_2.png')
+        self_text_img.save(self_text_op)
 
 
 def get_records(csv_path="/content/posts/downloaded_posts.csv"):
     cur_folder_path = os.path.dirname(os.path.realpath(__file__))
     cur_file_path = cur_folder_path + csv_path
+    input_file = csv.DictReader(open(cur_file_path))
+    for row in input_file:
+        # Check if not done
+        write_on_img(row)
 
 
-write_on_img()
+get_records()
+# write_on_img()

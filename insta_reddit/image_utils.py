@@ -16,7 +16,12 @@ class ImageText(object):
         self.encoding = encoding
 
     def save(self, filename=None):
-        self.image.save(filename or self.filename)
+        if filename.lower().endswith("jpg"):
+            self.image.convert('RGB').save(filename or self.filename)
+        elif filename.lower().endswith("png"):
+            self.image.save(filename or self.filename)
+        else:
+            raise Exception("Unknown file format")
 
     def get_font_size(self, text, font, max_width=None, max_height=None):
         if max_width is None and max_height is None:

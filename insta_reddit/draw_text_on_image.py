@@ -39,7 +39,7 @@ def get_title_and_self_text(
 
 def get_bg_img():
     # Returns a white background ImageText object
-    img = ImageText((500, 500), background=(255, 255, 255))
+    img = ImageText((1500, 1500), background=(255, 255, 255))
     return img
 
 
@@ -58,9 +58,9 @@ def get_img_output_file_paths(record):
     # File paths to save the generated images to
     cur_folder_path = os.path.dirname(os.path.realpath(__file__))
     title_path = "".join(
-        [cur_folder_path, "/content/images/generated/title_", record['id'], ".png"])
+        [cur_folder_path, "/content/images/generated/title_", record['id'], ".jpg"])
     self_text_path = "".join(
-        [cur_folder_path, "/content/images/generated/self_text_", record['id'], ".png"])
+        [cur_folder_path, "/content/images/generated/self_text_", record['id'], ".jpg"])
     # creating directory structure if needed
     Path("/".join(title_path.split('/')[:-1])).mkdir(parents=True, exist_ok=True)
     return title_path, self_text_path
@@ -69,7 +69,7 @@ def get_img_output_file_paths(record):
 def image_generated(record):
     cur_folder_path = os.path.dirname(os.path.realpath(__file__))
     title_path = "".join(
-        [cur_folder_path, "/content/images/generated/title_", record['id'], ".png"])
+        [cur_folder_path, "/content/images/generated/title_", record['id'], ".jpg"])
     if Path(title_path).is_file():
         return True
 
@@ -83,36 +83,37 @@ def write_on_img(record=None):
     title_op, self_text_op = get_img_output_file_paths(record)
 
     # Write title_img by default for everything, unless either title or self text cross the threshold.
-    # Save it as img_title_<<id>>.png
+    # Save it as img_title_<<id>>.jpg
     # Write self_text_img only if there's some sizeable self_text.
-    # img_self_text_<<id>>.png
+    # img_self_text_<<id>>.jpg
     if title:
         title_img = get_bg_img()
-        title_img.write_vertically_centred_text_box(left_padding=50, upper=0, lower=250,
+        title_img.write_vertically_centred_text_box(left_padding=150, upper=0, lower=750,
                                                     text="ULPT:",
-                                                    box_width=400,
+                                                    box_width=1200,
                                                     font_filename=get_format()['subreddit_font'],
-                                                    font_size=60,
+                                                    font_size=180,
                                                     color=get_format()['subreddit_color'],
                                                     place='center')
-        title_img.write_vertically_centred_text_box(left_padding=50, upper=150, lower=450,
+        title_img.write_vertically_centred_text_box(left_padding=150, upper=450, lower=1350,
                                                     text=title,
-                                                    box_width=400,
+                                                    box_width=1200,
                                                     font_filename=get_format()['title_font'],
-                                                    font_size=20, color=get_format()['title_color'],
-                                                    place='justify')
+                                                    font_size=60, color=get_format()['title_color'],
+                                                    place='left')
+
         title_img.save(title_op)
         print("Image generated.")
 
     if self_text:
         self_text_img = get_bg_img()
-        self_text_img.write_vertically_centred_text_box(left_padding=50, upper=100, lower=400,
-                                                        text=self_text, box_width=400,
+        self_text_img.write_vertically_centred_text_box(left_padding=150, upper=300, lower=1200,
+                                                        text=self_text, box_width=1200,
                                                         font_filename=get_format()[
                                                             'self_text_font'],
-                                                        font_size=20,
+                                                        font_size=60,
                                                         color=get_format()['self_text_color'],
-                                                        place='justify')
+                                                        place='left')
         self_text_img.save(self_text_op)
 
 

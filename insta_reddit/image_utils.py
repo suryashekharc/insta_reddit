@@ -1,3 +1,6 @@
+# Surya's modification of Alvaro Justen's gist - with due permissions:
+# https://gist.github.com/turicas/1455973/8ca2c5fc823b611ea1a0f631fe2fbfef4c9591d7
+
 from PIL import Image, ImageDraw, ImageFont
 
 

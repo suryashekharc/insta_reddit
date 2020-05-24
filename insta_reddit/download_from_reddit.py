@@ -1,5 +1,5 @@
 """
-# IMP - Have a config.py file in the same directory containing the following text:
+# IMP - Have a credentials.py file in the same directory containing the following text:
 client_id='your_client_id'
 client_secret='your_client_secrety'
 user_agent='your_user_agent'
@@ -12,7 +12,7 @@ import sys
 
 import pandas as pd
 import praw
-from insta_reddit import config
+from insta_reddit import credentials
 
 """
 1. Keep a record of all posts downloaded
@@ -29,12 +29,12 @@ reddit = None  # Reddit instance
 
 
 def initialize():
-    # NOTE: Ensure the config.py file is present in the current directory
+    # NOTE: Ensure the credentials.py file is present in the current directory
     global reddit
-    reddit = praw.Reddit(client_id=config.client_id,
-                         client_secret=config.client_secret,
-                         user_agent=config.user_agent,
-                         username=config.username)
+    reddit = praw.Reddit(client_id=credentials.client_id,
+                         client_secret=credentials.client_secret,
+                         user_agent=credentials.user_agent,
+                         username=credentials.username)
     if not reddit.read_only:  # Flag to ensure this object has been correctly configured
         raise Exception("Reddit object not configured correctly to be read_only.")
 

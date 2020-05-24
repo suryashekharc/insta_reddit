@@ -1,5 +1,7 @@
 instabot
+nltk
 pandas
 Pillow
 praw
 print-schema
+textblob

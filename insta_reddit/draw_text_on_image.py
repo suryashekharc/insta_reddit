@@ -67,10 +67,12 @@ def get_img_output_file_paths(record):
 
 
 def image_generated(record):
+    # Returns True if image has already been generated or uploaded
     cur_folder_path = os.path.dirname(os.path.realpath(__file__))
     title_path = "".join(
         [cur_folder_path, "/content/images/generated/title_", record['id'], ".jpg"])
-    if Path(title_path).is_file():
+    if Path(title_path).is_file() or \
+            Path(title_path.replace("generated/title_", "uploaded/title_")).is_file():
         return True
 
 

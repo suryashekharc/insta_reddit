@@ -9,7 +9,7 @@ nltk.download("punkt")
 nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 """
-
+import os
 import shutil
 
 import nltk
@@ -17,6 +17,8 @@ from nltk.stem import WordNetLemmatizer
 
 from instabot import Bot
 from insta_reddit import credentials
+
+DEFAULT_HASHTAGS = " #ULPT #unethical #lifeprotips #lpt"
 
 
 def get_hashtags(text, max_num_hashtags=15):
@@ -27,13 +29,13 @@ def get_hashtags(text, max_num_hashtags=15):
     hashtag_string = "#" + " #".join(hashtags[:min(len(hashtags), (max_num_hashtags - 4))]) \
         if len(hashtags) > 0 \
         else ""
-    hashtag_string += " #ULPT" + " #unethical" + " #lifeprotips" + " #lpt"
+    hashtag_string += DEFAULT_HASHTAGS
     print("Hashtags generated: {}".format(hashtag_string))
     return hashtag_string
 
 
 def get_caption(author, hashtags, url):
-    return hashtags + "  Author: {} URL: {}".format(author, url)
+    return hashtags + "  Author: u/{}  URL: {}".format(author, url)
 
 
 def move_to_uploaded(file_path):
@@ -42,6 +44,22 @@ def move_to_uploaded(file_path):
     # to avoid a potential "generated" string in some other part of the filepath getting replaced
     pass
 
+
+def already_uploaded():
+    return True
+
+
+def find_posts_to_upload():
+    """
+    Iterate through the "generated" folder
+    Look for images there which are not there in "uploaded"
+    Find their data (text/author/etc) using the file_name and by filtering the CSV for it
+    Return the CSV row as a dict, and the files to upload
+    """
+    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    title_path = "".join([cur_folder_path, "/content/images/generated/"])
+    
+    pass
 
 def upload_posts():
     # bot = Bot()

@@ -3,7 +3,7 @@
 # If not, upload it and move it to images.uploaded
 
 """
-# NOTE: Run the following lines from a Python console:
+# NOTE: Run the following lines from a Python console to enable hashtag generation:
 import nltk
 nltk.download("punkt")
 nltk.download('averaged_perceptron_tagger')
@@ -58,7 +58,7 @@ def find_posts_to_upload():
     """
     cur_folder_path = os.path.dirname(os.path.realpath(__file__))
     title_path = "".join([cur_folder_path, "/content/images/generated/"])
-    
+
     pass
 
 def upload_posts():

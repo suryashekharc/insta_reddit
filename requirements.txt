@@ -1,3 +1,4 @@
+gspread
 instabot
 nltk
 pandas

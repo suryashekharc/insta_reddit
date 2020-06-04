@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 
-from insta_reddit.image_utils import ImageText
+from insta_reddit.code.image_utils import ImageText
 
 
 # Download and install fonts from: https://www.cufonfonts.com/font/helvetica-neue-9
@@ -56,7 +56,7 @@ def get_format():
 
 def get_img_output_file_paths(record):
     # File paths to save the generated images to
-    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
     title_path = "".join(
         [cur_folder_path, "/content/images/generated/title_", record['id'], ".jpg"])
     self_text_path = "".join(
@@ -68,7 +68,7 @@ def get_img_output_file_paths(record):
 
 def image_generated(record):
     # Returns True if image has already been generated or uploaded
-    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
     title_path = "".join(
         [cur_folder_path, "/content/images/generated/title_", record['id'], ".jpg"])
     if Path(title_path).is_file() or \
@@ -120,7 +120,7 @@ def write_on_img(record=None):
 
 
 def main(csv_path="/content/posts/downloaded_posts.csv"):
-    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
     cur_file_path = cur_folder_path + csv_path
     input_file = csv.DictReader(open(cur_file_path))
     for row in input_file:

@@ -99,7 +99,7 @@ def save_posts(content_df, output_file="/content/posts/downloaded_posts.csv"):
     :param output_file:
     :return:
     """
-    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
+    cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
     cur_file_path = cur_folder_path + output_file
     dir_path = "/".join(cur_file_path.split('/')[:-1])
     if not os.path.exists(dir_path):

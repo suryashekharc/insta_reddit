@@ -17,6 +17,7 @@ from nltk.stem import WordNetLemmatizer
 
 from instabot import Bot
 from insta_reddit import credentials
+from insta_reddit.code.sheets_db import SheetsDb
 
 DEFAULT_HASHTAGS = " #ULPT #unethical #lifeprotips #lpt"
 
@@ -70,4 +71,5 @@ def upload_posts():
     # bot.upload_photo('/Users/suryasekharchakraborty/Documents/insta_reddit/insta_reddit/'
     #                  'content/images/generated/title_g76gmj.jpg',
     #                  caption="#ULPT")
+    sdb = SheetsDb("../service_account.json")  # to update Sheets if success
     pass

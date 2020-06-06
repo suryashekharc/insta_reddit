@@ -13,6 +13,7 @@ import sys
 import pandas as pd
 import praw
 from insta_reddit import credentials
+from insta_reddit.code.sheets_db import SheetsDb  # To append to sheets
 
 """
 1. Keep a record of all posts downloaded
@@ -137,5 +138,6 @@ if __name__ == "__main__":
     parser.add_argument('--output_file', dest='output_file',
                         default="/content/posts/downloaded_posts.csv",
                         help="""Name of output file""")
+
     main(args=parser.parse_args())
     sys.exit(0)

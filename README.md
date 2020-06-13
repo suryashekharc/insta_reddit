@@ -1,6 +1,7 @@
 # insta_reddit
 
-![insta_reddit_flow](https://imgur.com/a/sjcmM5d.jpg)
+![insta_reddit flow](https://i.imgur.com/zrZVcCR.jpg)
+
 
 1. Download top K posts from a subreddit
 (chosen [r/unethicallifeprotips](https://www.reddit.com/r/UnethicalLifeProTips/) for this).

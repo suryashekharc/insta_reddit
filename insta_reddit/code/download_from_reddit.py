@@ -1,5 +1,5 @@
 """
-# IMP - Have a credentials.py file in the same directory containing the following text:
+# IMP - Have a credentials.py file in the root directory containing the following text:
 client_id='your_client_id'
 client_secret='your_client_secrety'
 user_agent='your_user_agent'
@@ -13,7 +13,7 @@ import sys
 import pandas as pd
 import praw
 from insta_reddit import credentials
-from insta_reddit.code.sheets_db import SheetsDb  # To append to sheets
+from insta_reddit.code.sheets_db import SheetsDb  # To append records to sheets
 
 """
 1. Keep a record of all posts downloaded
@@ -93,11 +93,11 @@ def cleanup_content(content_df, colnames=None):
     return content_df.dropna()
 
 
-def save_posts(content_df, output_file="/content/posts/downloaded_posts.csv"):
-    """
+def save_posts_to_csv(content_df, output_file="/content/posts/downloaded_posts.csv"):
+    """ TODO: Call this function if the user does not want to integrate with GSheets
     Save posts in the content df at an output path after checking if they already exist
     :param content_df:
-    :param output_file:
+    :param output_file: File path from root where to save the CSV
     :return:
     """
     cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
@@ -116,20 +116,36 @@ def save_posts(content_df, output_file="/content/posts/downloaded_posts.csv"):
         content_df.to_csv(cur_file_path, mode='w', header=True, index=False)
 
 
+def save_posts_to_gsheets(content_df):
+    # Iterate through rows of content_df. If id not in GSheet, append row.
+    sdb = SheetsDb(sheet_id=credentials.sheets_url,
+                   credentials_path="/Users/suryasekharchakraborty/Documents/insta_reddit/"
+                                    "insta_reddit/service_account.json")
+    for index, row in content_df.iterrows():
+        my_list = [row.title, row.selftext, row.author.name, row.url, row.id]
+        print ("Trying {}".format(row.id))
+        if sdb.get_row_for_id(row.id) == -1:  # i.e. ID not found
+            sdb.append_row(my_list)
+        else:
+            print("Found at {}".format(sdb.get_row_for_id(row.id)))
+
+
 def main(args):
     initialize()
     content_df = get_posts(args.subreddit_name,
                            args.post_count,
                            args.time_filter,
                            args.fields.replace(" ", "").split(","))
-    save_posts(cleanup_content(content_df), args.output_file)
+    cleaned_content_df = cleanup_content(content_df)
+    save_posts_to_gsheets(cleaned_content_df)
+    # save_posts_to_csv(cleaned_content_df, args.output_file)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--subreddit_name', dest='subreddit_name', default="unethicallifeprotips",
                         help="""Name of the subreddit""")
-    parser.add_argument('--post_count', dest='post_count', default=5,
+    parser.add_argument('--post_count', dest='post_count', default=15,
                         help="""Number of posts to fetch""")
     parser.add_argument('--time_filter', dest='time_filter', default="month",
                         help="""day/month/week etc since we are sorting by top""")

@@ -19,13 +19,16 @@ class SheetsDb:
 
     def get_row_for_id(self, post_id: str)->int:
         """
-        Finds the row given the ID
+        Finds the row given the ID, returns -1 if not found
         :param str post_id: Reddit post ID
         :return int: The index of the row the ID is on
         """
         id_col = self.get_index_for_column("id")
         id_list = self.sheet.col_values(id_col)
-        return id_list.index(post_id) + 1
+        try:
+            return id_list.index(post_id) + 1
+        except ValueError as _:
+            return -1
 
     def get_index_for_column(self, colname: str)->int:
         """
@@ -61,12 +64,19 @@ class SheetsDb:
             self.sheet.update_cell(last_row_idx + 1, idx + 1, elem)
         print ("Row {} appended.".format(last_row_idx + 1))
 
+    def get_unuploaded_rows(self):
+        """
+        Get all the records that are yet to be uploaded
+        :rtype: list(dict)
+        """
+        all_rows = self.sheet.get_all_records()
+        return [row for row in all_rows if row['image_uploaded'] != "TRUE"]
+
 
 if __name__ == "__main__":
     # Run this file to test out the functions
     sdb = SheetsDb(sheet_id=credentials.sheets_url,
                    credentials_path="/Users/suryasekharchakraborty/Documents/insta_reddit/"
                                     "insta_reddit/service_account.json")
-
-    sdb.update_image_uploaded("glwvvc")
-    sdb.append_row(["a", "b", "c"])
+    # sdb.get_unuploaded_rows()
+    # sdb.update_image_uploaded("glwvvc")

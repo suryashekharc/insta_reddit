@@ -1,6 +1,8 @@
 # Upload to instagram
-# Check for image in images.generated, if it also exists in images.uploaded
-# If not, upload it and move it to images.uploaded
+# Check GSheets for images not uploaded yet
+# Check if those IDs are available in images/generated
+# If found, check if it also contains a self_text
+# Upload them together, move them to uploaded, and update GSheets with post ID
 
 """
 # NOTE: Run the following lines from a Python console to enable hashtag generation:
@@ -9,8 +11,10 @@ nltk.download("punkt")
 nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 """
+# TODO: See if multiple photo uploads is supported
 import os
 import shutil
+import glob
 
 import nltk
 from nltk.stem import WordNetLemmatizer
@@ -20,23 +24,45 @@ from insta_reddit import credentials
 from insta_reddit.code.sheets_db import SheetsDb
 
 DEFAULT_HASHTAGS = " #ULPT #unethical #lifeprotips #lpt"
+MAX_NUM_HASHTAGS = 15
 
 
-def get_hashtags(text, max_num_hashtags=15):
+def get_hashtags(text):
+    """
+    Returns a string of hashtags generated from the text
+    :param str text:    The text of the title
+    :return:            Space separated hashtags generated
+    :rtype:             str
+    """
     lemmatizer = WordNetLemmatizer()
     hashtags = list(set([lemmatizer.lemmatize(word)
                          for (word, pos) in nltk.pos_tag(nltk.word_tokenize(text))
-                         if pos[0] == 'N']))
-    hashtag_string = "#" + " #".join(hashtags[:min(len(hashtags), (max_num_hashtags - 4))]) \
+                         if pos[0] == 'N']))  # use nouns to get hashtags
+    hashtag_string = "#" + " #".join(hashtags[:min(len(hashtags), (MAX_NUM_HASHTAGS - 4))]) \
         if len(hashtags) > 0 \
-        else ""
+        else ""  # total upto 15+4 = 19 hashtags (any more and Instagram starts lowering SEO)
     hashtag_string += DEFAULT_HASHTAGS
     print("Hashtags generated: {}".format(hashtag_string))
     return hashtag_string
 
 
-def get_caption(author, hashtags, url):
-    return hashtags + "  Author: u/{}  URL: {}".format(author, url)
+def get_caption(record):
+    """
+    Return the complete caption for a post
+    :param dict record: dict containing 'title', 'author', 'url' in its keys
+    :return:            caption for the post to be uploaded
+    :rtype:             str
+    """
+    hashtags = get_hashtags(record['title'])
+    author, url = record['author'], record['url']
+    prefix_text = "Unethical life pro tips be like... "
+    if record['selftext']:
+        st = record['selftext']
+        if 30 <= len(st) <= 1000:
+            if not ("upvote" in st.lower() or "edit" in st.lower() or "thank" in st.lower()):
+                prefix_text = st
+    return prefix_text + hashtags + \
+           "  Author: u/{}  URL: {}".format(author, url)
 
 
 def move_to_uploaded(file_path):
@@ -46,30 +72,54 @@ def move_to_uploaded(file_path):
     pass
 
 
-def already_uploaded():
-    return True
-
-
-def find_posts_to_upload():
+def get_image_location(post_id):
     """
-    Iterate through the "generated" folder
-    Look for images there which are not there in "uploaded"
-    Find their data (text/author/etc) using the file_name and by filtering the CSV for it
-    Return the CSV row as a dict, and the files to upload
+    Returns a list of image file paths for a given post ID
+    :param str post_id: To be found in file name
+    :return:            List of image file paths in /content/images/generated/title with the post ID
+    :rtype:             list(str)
     """
-    cur_folder_path = os.path.dirname(os.path.realpath(__file__))
-    title_path = "".join([cur_folder_path, "/content/images/generated/"])
+    cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
+    title_path = "".join([cur_folder_path, "/content/images/generated/title"])
+    all_images_paths = glob.glob(title_path + "*" + post_id + ".jpg")
+    return all_images_paths
 
-    pass
 
-def upload_posts():
-    # bot = Bot()
-    #
-    # bot.login(username=credentials.instabot_username,
-    #           password=credentials.instabot_password)
-    #
-    # bot.upload_photo('/Users/suryasekharchakraborty/Documents/insta_reddit/insta_reddit/'
-    #                  'content/images/generated/title_g76gmj.jpg',
-    #                  caption="#ULPT")
-    sdb = SheetsDb("../service_account.json")  # to update Sheets if success
-    pass
+def upload_posts(record):
+    """
+
+    :param record:
+    :return:
+    """
+    bot = Bot()
+    bot.login(username=credentials.instabot_username,
+              password=credentials.instabot_password)
+
+    images = get_image_location(record['id'])
+    if not images:
+        print ("Image file not found for ID: {}".format(record['id']))
+        return False
+
+    if len(images) == 1:  # contains only title
+        bot.upload_photo(images[0], caption=get_caption(record))
+        return True
+    elif len(images) == 2:  # contains title + selftext
+        print ("No support yet for multiple image uploads.")
+        return False
+
+
+def main():
+    credentials_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]) + \
+        "/service_account.json"
+    sdb = SheetsDb(sheet_id=credentials.sheets_url,
+                   credentials_path=credentials_path)
+    unuploaded_posts = sdb.get_unuploaded_rows()
+    for unuploaded_post in unuploaded_posts:
+        post_id = unuploaded_post['id']
+        upload_posts(unuploaded_post)
+        sdb.update_image_uploaded(post_id)
+        break  # To not run more than 1 upload at a time to beat the bot-detectors
+
+
+if __name__ == "__main__":
+    main()

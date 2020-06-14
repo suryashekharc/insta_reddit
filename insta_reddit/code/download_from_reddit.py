@@ -79,6 +79,7 @@ def cleanup_content(content_df, colnames=None):
     :param colnames:    Which columns to clean up
     :return:
     """
+    # TODO: Filter out selftext containing 'edit', 'thanks', 'upvote'
     if colnames is None:
         colnames = ['title']
 
@@ -123,7 +124,7 @@ def save_posts_to_gsheets(content_df):
                                     "insta_reddit/service_account.json")
     for index, row in content_df.iterrows():
         my_list = [row.title, row.selftext, row.author.name, row.url, row.id]
-        print ("Trying {}".format(row.id))
+        print("Trying {}".format(row.id))
         if sdb.get_row_for_id(row.id) == -1:  # i.e. ID not found
             sdb.append_row(my_list)
         else:

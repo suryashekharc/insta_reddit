@@ -53,8 +53,11 @@ crontab -e
 Add this line your crontab: `@daily /path/to/run_all_jobs.sh`
 
 
-#### Sample post that gets uploaded on [Instagram](https://www.instagram.com/unethical.lifeprotips/):
-![sample_post](https://i.imgur.com/1czZFFK.png)
+#### End result on [Instagram](https://www.instagram.com/unethical.lifeprotips/):
+![feed](https://i.imgur.com/9MmYy81.jpg)
+
+Sample post:
+![sample_post](https://i.imgur.com/1czZFFK.jpg)
 
 
 ## Contributing

@@ -7,8 +7,8 @@ username='your_user_name'
 """
 
 import argparse
-import os
 import sys
+import os
 import html
 
 import pandas as pd
@@ -24,7 +24,6 @@ from insta_reddit.code.sheets_db import SheetsDb  # To append records to sheets
 5. Add link to post and username for credits on the post
 6. Bam!
 
-TODO: If the post itself has selftext, use it for the caption
 TODO: If it is a ULPT request, add the top comment as the next image
 """
 reddit = None  # Reddit instance
@@ -99,9 +98,10 @@ def cleanup_content(content_df, colnames=None):
 
 def save_posts_to_gsheets(content_df):
     # Iterate through rows of content_df. If id not in GSheet, append row.
+    credentials_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]) + \
+        "/service_account.json"
     sdb = SheetsDb(sheet_id=credentials.sheets_url,
-                   credentials_path="/Users/suryasekharchakraborty/Documents/insta_reddit/"
-                                    "insta_reddit/service_account.json")
+                   credentials_path=credentials_path)
     for index, row in content_df.iterrows():
         my_list = [row.title, row.selftext, row.author.name, row.url, row.id]
         print("Trying {}".format(row.id))

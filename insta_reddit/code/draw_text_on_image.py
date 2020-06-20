@@ -33,8 +33,7 @@ def get_title_and_self_text(record):
 
 def get_bg_img():
     # Returns a white background ImageText object
-    img = ImageText((1500, 1500), background=(255, 255, 255))
-    return img
+    return ImageText((1500, 1500), background=(255, 255, 255))
 
 
 def get_format():

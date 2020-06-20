@@ -15,6 +15,8 @@ nltk.download('wordnet')
 import os
 import shutil
 import glob
+import argparse
+import sys
 
 import nltk
 from nltk.stem import WordNetLemmatizer
@@ -110,17 +112,21 @@ def upload_posts(record):
         return False
 
 
-def main():
+def main(args):
     credentials_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]) + \
         "/service_account.json"
     sdb = SheetsDb(sheet_id=credentials.sheets_url,
                    credentials_path=credentials_path)
     unuploaded_posts = sdb.get_unuploaded_rows()
-    for unuploaded_post in unuploaded_posts[:3]:
+    for unuploaded_post in unuploaded_posts[:args.post_count]:
         post_id = unuploaded_post['id']
         upload_posts(unuploaded_post)
         sdb.update_image_uploaded(post_id)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--post_count', dest='post_count', default=1,
+                        help="""Number of posts to post at one call""")
+    main(args=parser.parse_args())
+    sys.exit(0)

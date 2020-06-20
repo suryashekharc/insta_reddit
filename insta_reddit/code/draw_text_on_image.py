@@ -112,14 +112,15 @@ def write_on_img(record=None):
         self_text_img.save(self_text_op)
 
 
-def main_gsheets():
+def main():
+    credentials_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]) + \
+                       "/service_account.json"
     sdb = SheetsDb(sheet_id=credentials.sheets_url,
-                   credentials_path="/Users/suryasekharchakraborty/Documents/insta_reddit/"
-                                    "insta_reddit/service_account.json")
+                   credentials_path=credentials_path)
     unuploaded_records = sdb.get_unuploaded_rows()
     for record in unuploaded_records:
         write_on_img(record)
 
 
 if __name__ == "__main__":
-    main_gsheets()
+    main()

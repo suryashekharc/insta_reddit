@@ -64,7 +64,7 @@ def get_posts(subreddit_name="unethicallifeprotips",
     # Metadata of the fields of a submission are available here:
     # https://praw.readthedocs.io/en/latest/code_overview/models/submission.html
     # PRAW uses lazy objects so that network requests to ...
-    # ... Reddit’s API are only issued when information is needed.
+    # ... Reddit's API are only issued when information is needed.
     for submission in reddit.subreddit(subreddit_name).top(limit=post_count,
                                                            time_filter=time_filter):
         for field in fields:
@@ -99,7 +99,7 @@ def cleanup_content(content_df, colnames=None):
 def save_posts_to_gsheets(content_df):
     # Iterate through rows of content_df. If id not in GSheet, append row.
     credentials_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]) + \
-        "/service_account.json"
+                       "/service_account.json"
     sdb = SheetsDb(sheet_id=credentials.sheets_url,
                    credentials_path=credentials_path)
     for index, row in content_df.iterrows():
@@ -113,9 +113,9 @@ def save_posts_to_gsheets(content_df):
 
 def main(args):
     initialize()
-    content_df = get_posts(args.subreddit_name,
-                           args.post_count,
-                           args.time_filter,
+    content_df = get_posts(str(args.subreddit_name),
+                           int(args.post_count),
+                           str(args.time_filter),
                            args.fields.replace(" ", "").split(","))
     cleaned_content_df = cleanup_content(content_df)
     save_posts_to_gsheets(cleaned_content_df)

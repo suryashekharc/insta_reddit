@@ -101,24 +101,24 @@ def upload_posts(record):
 
     images = get_image_location(record['id'])
     if not images:
-        print ("Image file not found for ID: {}".format(record['id']))
+        print("Image file not found for ID: {}".format(record['id']))
         return False
 
     if len(images) == 1:  # contains only title
         bot.upload_photo(images[0], caption=get_caption(record))
         return True
     elif len(images) == 2:  # contains title + selftext
-        print ("No support yet for multiple image uploads.")
+        print("No support yet for multiple image uploads.")
         return False
 
 
 def main(args):
     credentials_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]) + \
-        "/service_account.json"
+                       "/service_account.json"
     sdb = SheetsDb(sheet_id=credentials.sheets_url,
                    credentials_path=credentials_path)
     unuploaded_posts = sdb.get_unuploaded_rows()
-    for unuploaded_post in unuploaded_posts[:args.post_count]:
+    for unuploaded_post in unuploaded_posts[:int(args.post_count)]:
         post_id = unuploaded_post['id']
         upload_posts(unuploaded_post)
         sdb.update_image_uploaded(post_id)

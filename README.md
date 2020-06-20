@@ -17,9 +17,13 @@ to use Google Sheets as a DB.
 Use the screenshot below for reference.
 
 At the end of all the setup, the credentials file should look like this:
-![insta_reddit flow](https://i.imgur.com/mx7yeHX.jpg)
+![credentials](https://i.imgur.com/mx7yeHX.jpg)
 
 #### Support modules
+Install requirements by running:
+```bash
+pip install -r requirements.txt
+```
 You'll also need `nltk`, used to generate captions.
 Run the following (one-time effort) from a Python3 shell.
 
@@ -32,13 +36,26 @@ nltk.download('wordnet')
 
 #### How to run the entire thing:
 ```bash
+cd insta_reddit/code
 python download_from_reddit.py
 python draw_text_on_image.py
 python upload_to_instagram.py
 
 ```
+Or run the modifiable Cron job (remember to change the venv path):
+```bash
+sh run_all_jobs.sh
+```
+Or add the above to your crontab to run at your set frequency:
+```bash
+crontab -e
+```
+Add this line your crontab: `@daily /path/to/run_all_jobs.sh`
 
-TODO: Write a Cron that automates the process.
+
+#### Sample post that gets uploaded on [Instagram](https://www.instagram.com/unethical.lifeprotips/):
+![sample_post](https://i.imgur.com/1czZFFK.png)
+
 
 ## Contributing
 Pull requests are welcome! 
@@ -47,7 +64,7 @@ For major changes, please open an issue first to discuss what you would like to 
 ## Author
 * **Surya Shekhar Chakraborty**
 
-Much thanks to Puneet Jindal for brainstorming, and to you for coming here. :)
+Much thanks to Avishek Rakshit for help with the graphic design, Puneet Jindal for brainstorming, and to you for coming here. :)
 
 ## License
 This project is licensed under the MIT License - 

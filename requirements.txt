@@ -2,6 +2,7 @@ gspread
 instabot
 nltk
 pandas
+python-crontab
 Pillow
 praw
 print-schema

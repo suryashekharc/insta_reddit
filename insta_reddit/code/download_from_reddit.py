@@ -9,6 +9,7 @@ username='your_user_name'
 import argparse
 import os
 import sys
+import html
 
 import pandas as pd
 import praw
@@ -23,7 +24,7 @@ from insta_reddit.code.sheets_db import SheetsDb  # To append records to sheets
 5. Add link to post and username for credits on the post
 6. Bam!
 
-TODO: If the post itself has selftext, add it to a separate image clubbed together
+TODO: If the post itself has selftext, use it for the caption
 TODO: If it is a ULPT request, add the top comment as the next image
 """
 reddit = None  # Reddit instance
@@ -75,46 +76,25 @@ def get_posts(subreddit_name="unethicallifeprotips",
 def cleanup_content(content_df, colnames=None):
     """
     Read the dumped posts and clean up the text
+    Also convert the HTML entities to characters, e.g. '&gt;' to '>'
     :param content_df:  Dataframe containing columns in colnames to clean up
     :param colnames:    Which columns to clean up
     :return:
     """
     # TODO: Filter out selftext containing 'edit', 'thanks', 'upvote'
+    # NOTE: Selftext containing the above keywords are not uploaded as caption
     if colnames is None:
         colnames = ['title']
 
     def cleanup_ulpt_text(text):
         if "request" not in text.lower():
             text = text[text.find(' '):]
-            return None if len(text) < 20 or len(text) > 500 else text
+            return None if len(text) < 20 or len(text) > 500 else html.unescape(text)
         return None  # TODO: Add support for ULPT request
 
     for colname in colnames:
         content_df[colname] = content_df.apply(lambda row: cleanup_ulpt_text(row[colname]), axis=1)
     return content_df.dropna()
-
-
-def save_posts_to_csv(content_df, output_file="/content/posts/downloaded_posts.csv"):
-    """ TODO: Call this function if the user does not want to integrate with GSheets
-    Save posts in the content df at an output path after checking if they already exist
-    :param content_df:
-    :param output_file: File path from root where to save the CSV
-    :return:
-    """
-    cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
-    cur_file_path = cur_folder_path + output_file
-    dir_path = "/".join(cur_file_path.split('/')[:-1])
-    if not os.path.exists(dir_path):
-        os.mkdir(dir_path)
-
-    if os.path.exists(cur_file_path):  # To ensure we don't write the same post multiple times
-        original_df = pd.read_csv(cur_file_path)
-        combined_df = pd.concat([original_df, content_df]).drop_duplicates(
-            subset=["id"])
-        # Interestingly, without reset_index, the original indices will be added e.g. 0,1,2,0,1
-        combined_df.to_csv(cur_file_path, mode='w', header=True, index=False)
-    else:
-        content_df.to_csv(cur_file_path, mode='w', header=True, index=False)
 
 
 def save_posts_to_gsheets(content_df):
@@ -139,7 +119,6 @@ def main(args):
                            args.fields.replace(" ", "").split(","))
     cleaned_content_df = cleanup_content(content_df)
     save_posts_to_gsheets(cleaned_content_df)
-    # save_posts_to_csv(cleaned_content_df, args.output_file)
 
 
 if __name__ == "__main__":
@@ -152,9 +131,6 @@ if __name__ == "__main__":
                         help="""day/month/week etc since we are sorting by top""")
     parser.add_argument('--fields', dest='fields', default="title,selftext,author,url,id",
                         help="""Comma-separated list of fields to save""")
-    parser.add_argument('--output_file', dest='output_file',
-                        default="/content/posts/downloaded_posts.csv",
-                        help="""Name of output file""")
 
     main(args=parser.parse_args())
     sys.exit(0)

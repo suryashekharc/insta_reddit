@@ -3,7 +3,6 @@ Read CSV of posts and generate images for them
 """
 # Download and install fonts from: https://www.cufonfonts.com/font/helvetica-neue-9
 
-import csv
 import json
 import os
 from pathlib import Path
@@ -112,15 +111,6 @@ def write_on_img(record=None):
                                                         color=get_format()['self_text_color'],
                                                         place='left')
         self_text_img.save(self_text_op)
-
-
-def main_csv(csv_path="/content/posts/downloaded_posts.csv"):
-    # TODO: Enable this if GSheets integration is not done
-    cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
-    cur_file_path = cur_folder_path + csv_path
-    input_file = csv.DictReader(open(cur_file_path))
-    for row in input_file:
-        write_on_img(row)
 
 
 def main_gsheets():

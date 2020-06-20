@@ -23,6 +23,7 @@ from instabot import Bot
 from insta_reddit import credentials
 from insta_reddit.code.sheets_db import SheetsDb
 
+DEFAULT_CAPTION_PREFIX = "Unethical life pro tips be like... "
 DEFAULT_HASHTAGS = " #ULPT #unethical #lifeprotips #lpt"
 MAX_NUM_HASHTAGS = 15
 
@@ -34,6 +35,7 @@ def get_hashtags(text):
     :return:            Space separated hashtags generated
     :rtype:             str
     """
+    # TODO: Remove stopwords
     lemmatizer = WordNetLemmatizer()
     hashtags = list(set([lemmatizer.lemmatize(word)
                          for (word, pos) in nltk.pos_tag(nltk.word_tokenize(text))
@@ -55,7 +57,7 @@ def get_caption(record):
     """
     hashtags = get_hashtags(record['title'])
     author, url = record['author'], record['url']
-    prefix_text = "Unethical life pro tips be like... "
+    prefix_text = DEFAULT_CAPTION_PREFIX
     if record['selftext']:
         st = record['selftext']
         if 30 <= len(st) <= 1000:
@@ -114,11 +116,10 @@ def main():
     sdb = SheetsDb(sheet_id=credentials.sheets_url,
                    credentials_path=credentials_path)
     unuploaded_posts = sdb.get_unuploaded_rows()
-    for unuploaded_post in unuploaded_posts:
+    for unuploaded_post in unuploaded_posts[:3]:
         post_id = unuploaded_post['id']
         upload_posts(unuploaded_post)
         sdb.update_image_uploaded(post_id)
-        break  # To not run more than 1 upload at a time to beat the bot-detectors
 
 
 if __name__ == "__main__":

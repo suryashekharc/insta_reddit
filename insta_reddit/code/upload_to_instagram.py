@@ -17,6 +17,7 @@ import shutil
 import glob
 import argparse
 import sys
+import html
 
 import nltk
 from nltk.stem import WordNetLemmatizer
@@ -61,7 +62,7 @@ def get_caption(record):
     author, url = record['author'], record['url']
     prefix_text = DEFAULT_CAPTION_PREFIX
     if record['selftext']:
-        st = record['selftext']
+        st = html.unescape(record['selftext'])
         if 30 <= len(st) <= 1000:
             if not ("upvote" in st.lower() or "edit" in st.lower() or "thank" in st.lower()):
                 prefix_text = st

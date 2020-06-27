@@ -32,12 +32,14 @@ def get_title_and_self_text(record):
 
 
 def get_bg_img():
-    # Returns a white background ImageText object
+    """Returns a white background ImageText object
+    """
     return ImageText((1500, 1500), background=(255, 255, 255))
 
 
 def get_format():
-    # Format of the text, courtesy Avishek Rakshit (helluva designer)
+    """Format of the text, courtesy Avishek Rakshit (helluva designer)
+    """
     return {'subreddit_font': 'Helvetica95Black.ttf',
             'title_font': 'Helvetica65Medium_22443.ttf',
             'self_text_font': 'Helvetica55Roman_22439.ttf',
@@ -48,7 +50,8 @@ def get_format():
 
 
 def get_img_output_file_paths(record):
-    # File paths to save the generated images to
+    """ File paths to save the generated images to
+    """
     cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
     title_path = "".join(
         [cur_folder_path, "/content/images/generated/title_", record['id'], ".jpg"])
@@ -60,7 +63,8 @@ def get_img_output_file_paths(record):
 
 
 def image_generated(record):
-    # Returns True if image has already been generated or uploaded
+    """ Returns True if image has already been generated or uploaded
+    """
     cur_folder_path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
     title_path = "".join(
         [cur_folder_path, "/content/images/generated/title_", record['id'], ".jpg"])
@@ -70,17 +74,21 @@ def image_generated(record):
 
 
 def write_on_img(record=None):
-    # Generates image(s) for a record with the specified text
+    """ Generates image(s) for a record with the specified text
+    """
     record = json.loads(json.dumps(record))
     if image_generated(record):
         return
     title, self_text = get_title_and_self_text(record)
     title_op, self_text_op = get_img_output_file_paths(record)
 
-    # Write title_img by default for all unless either title or self text crosses the threshold
-    # Save it as img_title_<<id>>.jpg
-    # Write self_text_img only if there's some sizeable self_text.
-    # img_self_text_<<id>>.jpg
+    """
+    Write title_img by default for all unless either title or self text crosses the threshold
+    Save it as img_title_<<id>>.jpg
+    Write self_text_img only if there's some sizeable self_text.
+    img_self_text_<<id>>.jpg
+    """
+
     if title:
         title_img = get_bg_img()
         title_img.write_vertically_centred_text_box(left_padding=150, upper=0, lower=750,

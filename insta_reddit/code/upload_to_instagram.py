@@ -1,16 +1,11 @@
-# Upload to instagram
-# Check GSheets for images not uploaded yet
-# Check if those IDs are available in images/generated
-# If found, check if it also contains a self_text
-# Upload them together, move them to uploaded, and update GSheets with post ID
+"""
+Upload to instagram
+Check GSheets for images not uploaded yet
+Check if those IDs are available in images/generated
+If found, check if it also contains a self_text
+Upload them together, move them to uploaded, and update GSheets with post ID
+"""
 
-"""
-# NOTE: Run the following lines from a Python console to enable hashtag generation:
-import nltk
-nltk.download("punkt")
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
-"""
 # TODO: See if multiple photo uploads is supported
 import os
 import shutil
@@ -37,6 +32,13 @@ def get_hashtags(text):
     :param str text:    The text of the title
     :return:            Space separated hashtags generated
     :rtype:             str
+    """
+    """
+    # NOTE: Run the following lines from a Python console to enable hashtag generation:
+    import nltk
+    nltk.download("punkt")
+    nltk.download('averaged_perceptron_tagger')
+    nltk.download('wordnet')
     """
     # TODO: Remove stopwords
     lemmatizer = WordNetLemmatizer()

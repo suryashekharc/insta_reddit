@@ -1,11 +1,6 @@
 """
-# IMP - Have a credentials.py file in the root directory containing the following text:
-client_id='your_client_id'
-client_secret='your_client_secrety'
-user_agent='your_user_agent'
-username='your_user_name'
+Download top K posts from Reddit and save them to GSheets DB if not already saved.
 """
-
 import argparse
 import sys
 import os
@@ -16,36 +11,26 @@ import praw
 from insta_reddit import credentials
 from insta_reddit.code.sheets_db import SheetsDb  # To append records to sheets
 
-"""
-1. Keep a record of all posts downloaded
-2. Download the top K posts over the last T time period
-3. Strip it down to the ULPT itself
-4. Append to downloaded if not already covered
-5. Add link to post and username for credits on the post
-6. Bam!
-
-TODO: If it is a ULPT request, add the top comment as the next image
-"""
-reddit = None  # Reddit instance
-
 
 def initialize():
     # NOTE: Ensure the credentials.py file is present in the current directory
-    global reddit
-    reddit = praw.Reddit(client_id=credentials.client_id,
-                         client_secret=credentials.client_secret,
-                         user_agent=credentials.user_agent,
-                         username=credentials.username)
-    if not reddit.read_only:  # Flag to ensure this object has been correctly configured
+    reddit_obj = praw.Reddit(client_id=credentials.client_id,
+                             client_secret=credentials.client_secret,
+                             user_agent=credentials.user_agent,
+                             username=credentials.username)
+    if not reddit_obj.read_only:  # Flag to ensure this object has been correctly configured
         raise Exception("Reddit object not configured correctly to be read_only.")
+    return reddit_obj
 
 
-def get_posts(subreddit_name="unethicallifeprotips",
+def get_posts(reddit_obj,
+              subreddit_name="unethicallifeprotips",
               post_count=20,
               time_filter="month",
               fields=None):
     """
     Get all the posts as a pandas dataframe
+    :param reddit_obj:      Instance of PRAW API
     :param subreddit_name:  Name of the subreddit
     :param post_count:      Number of posts
     :param time_filter:     day/month/week etc since we are sorting by top
@@ -53,7 +38,6 @@ def get_posts(subreddit_name="unethicallifeprotips",
     :return:                Pandas DF with "count" rows and "len(kwargs)" columns
     """
     # TODO: Add support for hot along with top
-    global reddit
 
     if fields is None:  # To avoid passing mutable default args
         fields = ["title", "selftext", "author", "url", "id"]
@@ -65,8 +49,8 @@ def get_posts(subreddit_name="unethicallifeprotips",
     # https://praw.readthedocs.io/en/latest/code_overview/models/submission.html
     # PRAW uses lazy objects so that network requests to ...
     # ... Reddit's API are only issued when information is needed.
-    for submission in reddit.subreddit(subreddit_name).top(limit=post_count,
-                                                           time_filter=time_filter):
+    for submission in reddit_obj.subreddit(subreddit_name).top(limit=post_count,
+                                                               time_filter=time_filter):
         for field in fields:
             content_dict[field].append(getattr(submission, field))
     return pd.DataFrame(content_dict)
@@ -112,8 +96,9 @@ def save_posts_to_gsheets(content_df):
 
 
 def main(args):
-    initialize()
-    content_df = get_posts(str(args.subreddit_name),
+    reddit_obj = initialize()
+    content_df = get_posts(reddit_obj,
+                           str(args.subreddit_name),
                            int(args.post_count),
                            str(args.time_filter),
                            args.fields.replace(" ", "").split(","))

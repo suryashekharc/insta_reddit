@@ -24,6 +24,8 @@ Install requirements by running:
 ```bash
 pip install -r requirements.txt
 ```
+Download and install fonts from: https://www.cufonfonts.com/font/helvetica-neue-9
+
 You'll also need `nltk`, used to generate captions.
 Run the following (one-time effort) from a Python3 shell.
 

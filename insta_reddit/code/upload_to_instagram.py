@@ -22,8 +22,8 @@ from insta_reddit import credentials
 from insta_reddit.code.sheets_db import SheetsDb
 
 DEFAULT_CAPTION_PREFIX = "Unethical life pro tips be like... "
-DEFAULT_HASHTAGS = " #ULPT #unethical #lifeprotips #lpt"
-MAX_NUM_HASHTAGS = 15
+DEFAULT_HASHTAGS = " #lifeprotips #lpt"
+MAX_NUM_HASHTAGS = 18
 
 
 def get_hashtags(text):
@@ -65,9 +65,7 @@ def get_caption(record):
     prefix_text = DEFAULT_CAPTION_PREFIX
     if record['selftext']:
         st = html.unescape(record['selftext'])
-        if 30 <= len(st) <= 1000:
-            if not ("upvote" in st.lower() or "edit" in st.lower() or "thank" in st.lower()):
-                prefix_text = st
+        prefix_text = st
     return prefix_text + hashtags + \
            "  Author: u/{}  URL: {}".format(author, url)
 

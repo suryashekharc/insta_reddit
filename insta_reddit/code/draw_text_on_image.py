@@ -92,7 +92,7 @@ def write_on_img(record=None):
     if title:
         title_img = get_bg_img()
         title_img.write_vertically_centred_text_box(left_padding=150, upper=0, lower=750,
-                                                    text="ULPT:",
+                                                    text="LPT:",
                                                     box_width=1200,
                                                     font_filename=get_format()['subreddit_font'],
                                                     font_size=180,

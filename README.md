@@ -1,6 +1,6 @@
 # insta_reddit
 
-![insta_reddit flow](https://i.imgur.com/zrZVcCR.jpg)
+![insta_reddit flow](https://i.imgur.com/yZyakml.jpg)
 
 
 1. Download top K posts from a subreddit
@@ -63,7 +63,7 @@ Sample post:
 
 
 ## Contributing
-Pull requests are welcome! 
+Pull requests are welcome!
 For major changes, please open an issue first to discuss what you would like to change.
 
 ## Author
@@ -72,5 +72,5 @@ For major changes, please open an issue first to discuss what you would like to 
 Much thanks to Avishek Rakshit for help with the graphic design, Puneet Jindal for brainstorming, and to you for coming here. :)
 
 ## License
-This project is licensed under the MIT License - 
+This project is licensed under the MIT License -
 see the [LICENSE](https://github.com/suryashekharc/insta_reddit/blob/master/LICENSE) file for details

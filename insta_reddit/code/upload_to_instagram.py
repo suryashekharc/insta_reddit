@@ -12,6 +12,9 @@ import shutil
 import glob
 import argparse
 import sys
+from pathlib import Path
+git_root = str(Path(__file__).parent.parent.parent.resolve())
+sys.path.append(git_root)
 import html
 
 import nltk

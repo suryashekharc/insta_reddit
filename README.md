@@ -24,8 +24,7 @@ Install requirements by running:
 ```bash
 pip install -r requirements.txt
 ```
-Download and install fonts from: https://www.cufonfonts.com/font/helvetica-neue-9
-
+[Link](https://github.com/JotJunior/PHP-Boleto-ZF2/blob/master/public/assets/fonts/arial.ttf) to install the "arial.ttf" font if you need it.
 You'll also need `nltk`, used to generate captions.
 Run the following (one-time effort) from a Python3 shell.
 
@@ -35,7 +34,7 @@ nltk.download("punkt")
 nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 ```
-
+For SSL issues at this stage, run `bash /Applications/Python 3.6/Install Certificates.command`
 #### How to run the entire thing:
 ```bash
 cd insta_reddit/code

@@ -4,6 +4,9 @@ Download top K posts from Reddit and save them to GSheets DB if not already save
 import argparse
 import sys
 import os
+from pathlib import Path
+git_root = str(Path(__file__).parent.parent.parent.resolve())
+sys.path.append(git_root)
 import html
 
 import pandas as pd

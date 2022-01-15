@@ -2,10 +2,14 @@
 Read CSV of posts and generate images for them
 """
 # Download and install fonts from: https://www.cufonfonts.com/font/helvetica-neue-9
+# https://www.cufonfonts.com/font/pragmatica-extralight
 
 import json
 import os
 from pathlib import Path
+import sys
+git_root = str(Path(__file__).parent.parent.parent.resolve())
+sys.path.append(git_root)
 
 from insta_reddit import credentials
 from insta_reddit.code.image_utils import ImageText
@@ -40,9 +44,9 @@ def get_bg_img():
 def get_format():
     """Format of the text, courtesy Avishek Rakshit (helluva designer)
     """
-    return {'subreddit_font': 'Helvetica95Black.ttf',
-            'title_font': 'Helvetica65Medium_22443.ttf',
-            'self_text_font': 'Helvetica55Roman_22439.ttf',
+    return {'subreddit_font': 'arial.ttf',
+            'title_font': 'arial.ttf',
+            'self_text_font': 'arial.ttf',
             'subreddit_color': (159, 4, 4),
             'title_color': (33, 32, 32),
             'self_text_color': (0, 0, 0)
